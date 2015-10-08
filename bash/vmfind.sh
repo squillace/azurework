@@ -33,7 +33,11 @@ done
 printf "\n"
 for ((i=0; i<$count; i++))
 	do
-		echo "${missing[$i]}"
+		printf " =====  %s\n" "${missing[$i]}"
+		currentgroup=$(azure vm list "${missing[$i]}" --json | jq '.[].storageProfile.oSDisk.virtualHardDisk.uri')
+		printf " =====  %s\n" "$currentgroup"
+		classix=$(azure group show "${missing[$i]}"  --json | jq '.resources[] | select(.id | contains("Classic")) | .id')
+		printf " ===== %s\n" "$classix"
 done
 
 
