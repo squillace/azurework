@@ -12,7 +12,7 @@ fi
 declare -a missing
 count=0
 
-for ((i=1; i<$(($linkstotest + 1)); i++))
+for ((i=1; i<$(($groupstotest + 1)); i++))
 	do 
 # debugging
 		lastlinecount=${#thisstring}
@@ -21,11 +21,12 @@ for ((i=1; i<$(($linkstotest + 1)); i++))
 		echo "length of this string is ${#thisstring}"
 
 # stash any 404 results in the missing array
-		printf "\r%d of %d... ($count bad links so far)" "$i" $groupstotest
+#		printf "\r%d of %d... ($count bad links so far)" "$i" 
+echo $groupstotest
 #		result=$(curl -sL -w "%{http_code} %{url_effective}\\n" "${!i}" -o /dev/null | grep ^404)
-			if [[ "$result" ]]; then
+			if [[ true ]]; then
 #				printf " =====  %s\n" "$result"
-				missing[$count]="$result"
+				missing[$count]="${!i}"
 				((count++))
 			fi
 done
