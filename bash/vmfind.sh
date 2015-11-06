@@ -4,7 +4,7 @@ groupstotest=$# # this passes the number of arguments passed **after** the comma
 
 if [[ $# -eq 1 ]];
 	then 
-	echo "no groups passed."
+	echo "one group passed."
 else
 	echo "There were $groupstotest groups passed.";
 fi
@@ -17,12 +17,12 @@ for ((i=1; i<$(($groupstotest + 1)); i++))
 # debugging
 		lastlinecount=${#thisstring}
 		thisstring="${!i}"
-		echo "working on: $thisstring"
-		echo "length of this string is ${#thisstring}"
+#		echo "Examining the \"$thisstring\" resource group."
+#		echo "length of this string is ${#thisstring}"
 
 # stash any 404 results in the missing array
 #		printf "\r%d of %d... ($count bad links so far)" "$i" 
-echo $groupstotest
+# 		echo $groupstotest
 #		result=$(curl -sL -w "%{http_code} %{url_effective}\\n" "${!i}" -o /dev/null | grep ^404)
 			if [[ true ]]; then
 #				printf " =====  %s\n" "$result"
@@ -30,14 +30,18 @@ echo $groupstotest
 				((count++))
 			fi
 done
-printf "\n"
+# printf "\n"
 for ((i=0; i<$count; i++))
 	do
-		printf " =====  %s\n" "${missing[$i]}"
-		currentgroup=$(azure vm list "${missing[$i]}" --json | jq '.[].storageProfile.oSDisk.virtualHardDisk.uri')
-		printf " =====  %s\n" "$currentgroup"
-		classix=$(azure group show "${missing[$i]}"  --json | jq '.resources[] | select(.id | contains("Classic")) | .id')
-		printf " ===== %s\n" "$classix"
+		printf " ===== Resource group: %s\n" "${missing[$i]}"
+		currentgroup=$(azure vm list "${missing[$i]}" --json | jq -r '.[].storageProfile.oSDisk.virtualHardDisk.uri')
+		printf " =====  VHD file: %s\n" "$currentgroup"
+		classix=$(azure group show "${missing[$i]}"  --json | jq -r '.resources[] | select(.id | contains("Classic")) | .id')
+		
+#		if [[ "$classix" -ne "" ]]; then
+			printf " ===== Classic Resources: %s\n" "$classix"
+#		echo "$classix"
+#		fi
 done
 
 
